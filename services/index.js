@@ -1,35 +1,40 @@
-import { request, gql } from "graphql-request";
+import { request, gql } from 'graphql-request';
+
+const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
 
 export const getPosts = async () => {
-    const query = gql`
+  const query = gql`
     query MyQuery {
-        postsConnection {
-          edges {
-            node {
-              author {
-                bio
-                id
-                name
-                photo {
-                  url
-                }
-              }
-              createdAt
-              slug
-              title
-              excerpt
-              featuredImage {
+      postsConnection {
+        edges {
+          cursor
+          node {
+            author {
+              bio
+              name
+              id
+              photo {
                 url
               }
-              categories {
-                name
-                slug
-              }
+            }
+            createdAt
+            slug
+            title
+            excerpt
+            featuredImage {
+              url
+            }
+            categories {
+              name
+              slug
             }
           }
         }
       }
-      `
+    }
+  `;
 
-      const results = await request(graphqlAPI, query);
-}
+  const result = await request(graphqlAPI, query);
+
+  return result.postsConnection.edges;
+};
